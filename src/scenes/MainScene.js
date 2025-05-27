@@ -3,19 +3,22 @@ import { Scene } from "phaser";
 export class MainScene extends Scene {
     constructor() {
         super("MainScene");
-        this.initGameState();
         this.isMobile =
             /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
                 navigator.userAgent
             );
     }
 
-    initGameState() {}
-
     create() {
         this.width = this.scale.width;
         this.height = this.scale.height;
+        this.throwSpeed = 1;
+        this.spinning = false;
+        this.spinSoundSerial = 1;
+        this.win = false;
+
         this.setupBackground();
+        this.setupSounds();
     }
 
     setupBackground() {
@@ -107,32 +110,21 @@ export class MainScene extends Scene {
             .setInteractive();
 
         this.spinBtn.on("pointerdown", () => {
-            this.spinBtn.setTexture("startPressed");
-            this.bottomLightBright.setVisible(true);
-            this.spinPointer();
-            // this.playSpinAnimation();
+            if (!this.spinning) {
+                this.spinBtn.setTexture("startPressed");
+                this.bottomLightBright.setVisible(true);
+                this.spinPointer();
+            }
         });
     }
-    spinPointer() {
-        this.tween = this.tweens.add({
-            targets: [this.pointer, this.circleLight],
-            angle: Math.floor(360 * (Math.random() * 2 + 4)),
-            duration: 15000,
-            ease: "Cubic.easeOut",
-            callbackScope: this,
-            onComplete: function (tween) {
-                console.log(this.pointer.angle);
-                window.alert(
-                    "The angle of the pointer is " +
-                        this.pointer.angle +
-                        " degree"
-                );
-                this.spinBtn.setTexture("start");
-            },
-        });
+    setupSounds() {
+        this.spinSound = this.sound.add("spinSound1");
+        this.spinSound2 = this.sound.add("spinSound2");
+        this.winSound = this.sound.add("congrats");
+        this.loseSound = this.sound.add("loseSound");
     }
     playBgAnimation() {
-        this.time.addEvent({
+        this.bgAnimationTiemEvent = this.time.addEvent({
             delay: 1000, // every 1 second
             loop: true,
             callback: () => {
@@ -154,7 +146,7 @@ export class MainScene extends Scene {
                         targets: [particle1, particle2],
                         scale: 3,
                         alpha: 1,
-                        duration: 8000,
+                        duration: 8000 / this.throwSpeed,
                         ease: "Linear",
                         onComplete: () => {
                             particle1.destroy();
@@ -181,25 +173,286 @@ export class MainScene extends Scene {
             },
         });
     }
+    spinPointer() {
+        this.throwSpeed = 5;
+        this.bgAnimationTiemEvent.delay = 150;
+        this.spinning = true;
 
-    setupUI() {}
+        this.tween = this.tweens.add({
+            targets: [this.pointer, this.circleLight],
+            angle: Math.floor(360 * (Math.random() * 2 + 6)),
+            duration: 15000,
+            ease: "Cubic.easeOut",
+            callbackScope: this,
+            onComplete: function (tween) {
+                setTimeout(() => {
+                    this.showResult();
+                }, 1000);
+            },
+        });
+    }
+    checkResult() {
+        let angle = this.pointer.angle;
+        this.result = "";
+        let previousSpinSoundSerial = this.spinSoundSerial;
+        if (angle > 13 && angle <= 44) {
+            this.result = "FREE FLIPFLOPS";
+            this.spinSoundSerial = 1;
+            this.win = true;
+        } else if (angle > 44 && angle <= 69) {
+            this.result = "$5 KFC\nVOUCHER";
+            this.spinSoundSerial = 2;
+            this.win = true;
+        } else if (angle > 69 && angle <= 100) {
+            this.result = "FREE BEER!";
+            this.spinSoundSerial = 3;
+            this.win = true;
+        } else if (angle > 100 && angle <= 126) {
+            this.result = "5% OFF\nANY HIRE";
+            this.spinSoundSerial = 4;
+            this.win = true;
+        } else if (angle > 126 && angle <= 160) {
+            this.result = "FREE SINGLET";
+            this.spinSoundSerial = 5;
+            this.win = true;
+        } else if (angle > 160 || angle <= -173) {
+            this.result = "DREAMS...\nSHATTRED!";
+            this.spinSoundSerial = 6;
+            this.win = false;
+        } else if (angle > -173 && angle <= -137) {
+            this.result = "$20 DISCOUNT";
+            this.spinSoundSerial = 7;
+            this.win = true;
+        } else if (angle > -137 && angle <= -109) {
+            this.result = "FREE CAP";
+            this.spinSoundSerial = 8;
+            this.win = true;
+        } else if (angle > -109 && angle <= -74) {
+            this.result = "NEXT TIME, MATE!";
+            this.spinSoundSerial = 9;
+            this.win = false;
+        } else if (angle > -74 && angle <= -46) {
+            this.result = "$50 DISCOUNT";
+            this.spinSoundSerial = 10;
+            this.win = true;
+        } else if (angle > -46 && angle <= -13) {
+            this.result = "WHOOPS!";
+            this.spinSoundSerial = 11;
+            this.win = false;
+        } else if (angle > -13 || angle <= 13) {
+            this.result = "10% OFF\nNEXT HIRE";
+            this.spinSoundSerial = 12;
+            this.win = true;
+        }
+        if (this.spinSoundSerial !== previousSpinSoundSerial) {
+            this.spinSound.play();
+        }
+    }
+    showResult() {
+        if (this.win) {
+            this.winSound.play();
+            let blurRect = this.add
+                .rectangle(
+                    this.width * 0.5,
+                    this.height * 0.5,
+                    this.width,
+                    this.height,
+                    0x000000,
+                    0.3
+                )
+                .setDepth(13);
+            let resultBg = this.add
+                .image(
+                    this.scale.width * 0.5,
+                    this.scale.height * 0.47,
+                    "resultBg"
+                )
+                .setDepth(15)
+                .setOrigin(0.5, 0.5)
+                .setDisplaySize(this.width * 0.8, this.height * 0.8);
 
-    setupGameElements() {}
+            let resultText = this.add
+                .text(
+                    this.width * 0.5,
+                    this.height * 0.42,
+                    "YOU WIN\n" + this.result,
+                    {
+                        fontSize: "40px",
+                        color: "#54ff41de",
+                        fontFamily: "Arial",
+                        fontStyle: "bold",
+                        align: "center",
+                        lineSpacing: 20,
+                    }
+                )
+                .setOrigin(0.5)
+                .setDepth(16);
 
-    scaleBackgroundToFit() {
-        const gameWidth = this.cameras.main.width;
-        const gameHeight = this.cameras.main.height;
+            let coinsEmitter = this.add
+                .particles(0, 0, "coins", {
+                    x: this.width / 2,
+                    y: -150,
+                    speed: 300,
+                    lifespan: 3000,
+                    gravityY: 300,
+                    scale: 0.3,
+                    alpha: 0.8,
+                })
+                .setDepth(14);
+            setTimeout(() => {
+                coinsEmitter.stop();
+            }, 5000);
 
-        // Calculate scale to cover the entire screen while maintaining aspect ratio
-        const scaleX = gameWidth / this.background.width;
-        const scaleY = gameHeight / this.background.height;
-        const scale = Math.max(scaleX, scaleY);
+            let spinAgainBtn = this.add
+                .image(
+                    this.scale.width * 0.5,
+                    this.scale.height * 0.75,
+                    "spinAgainBtn"
+                )
+                .setDepth(15)
+                .setOrigin(0.5, 0.5)
+                .setScale(0.6)
+                .setInteractive({ useHandCursor: true })
+                .on("pointerdown", () => {
+                    this.tweens.add({
+                        targets: spinAgainBtn,
+                        scale: 0.5,
+                        duration: 100,
+                        ease: "Power1",
+                        onComplete: () => {
+                            this.tweens.add({
+                                targets: spinAgainBtn,
+                                scale: 0.6,
+                                duration: 100,
+                                ease: "Power1",
+                                onComplete: () => {
+                                    this.cameras.main.fadeOut(500);
+                                    setTimeout(() => {
+                                        blurRect.destroy();
+                                        resultBg.destroy();
+                                        resultText.destroy();
+                                        spinAgainBtn.destroy();
+                                        coinsEmitter.destroy();
+                                        setTimeout(() => {
+                                            this.cameras.main.fadeIn(500);
+                                            this.resetAll();
+                                        }, 500);
+                                    }, 500);
+                                },
+                            });
+                        },
+                    });
+                });
 
-        this.background.setScale(scale);
+            this.throwSpeed = 3;
+            this.bgAnimationTiemEvent.delay = 400;
+        } else {
+            this.loseSound.play();
+            this.throwSpeed = 1;
+            this.bgAnimationTiemEvent.delay = 1000;
+            let blurRect = this.add
+                .rectangle(
+                    this.width * 0.5,
+                    this.height * 0.5,
+                    this.width,
+                    this.height,
+                    0x000000,
+                    0.3
+                )
+                .setDepth(13);
+            let resultBg = this.add
+                .image(
+                    this.scale.width * 0.5,
+                    this.scale.height * 0.5,
+                    "resultBg"
+                )
+                .setDepth(15)
+                .setOrigin(0.5, 0.5)
+                .setDisplaySize(this.width * 0.8, this.height * 0.8);
 
-        // Center the background
-        this.background.setPosition(gameWidth / 2, gameHeight / 2);
+            let resultText = this.add
+                .text(this.width * 0.5, this.height * 0.47, this.result, {
+                    fontSize: "40px",
+                    color: "#330000",
+                    fontFamily: "Arial",
+                    fontStyle: "bold",
+                    align: "center",
+                    lineSpacing: 20,
+                })
+                .setOrigin(0.5)
+                .setDepth(16);
+
+            let spinAgainBtn = this.add
+                .image(
+                    this.scale.width * 0.5,
+                    this.scale.height * 0.75,
+                    "spinAgainBtn"
+                )
+                .setDepth(15)
+                .setOrigin(0.5, 0.5)
+                .setScale(0.6)
+                .setInteractive({ useHandCursor: true })
+                .on("pointerdown", () => {
+                    this.tweens.add({
+                        targets: spinAgainBtn,
+                        scale: 0.5,
+                        duration: 100,
+                        ease: "Power1",
+                        onComplete: () => {
+                            this.tweens.add({
+                                targets: spinAgainBtn,
+                                scale: 0.6,
+                                duration: 100,
+                                ease: "Power1",
+                                onComplete: () => {
+                                    this.cameras.main.fadeOut(500);
+                                    setTimeout(() => {
+                                        blurRect.destroy();
+                                        resultBg.destroy();
+                                        resultText.destroy();
+                                        spinAgainBtn.destroy();
+                                        setTimeout(() => {
+                                            this.cameras.main.fadeIn(500);
+                                            this.resetAll();
+                                        }, 500);
+                                    }, 500);
+                                },
+                            });
+                        },
+                    });
+                });
+
+            this.throwSpeed = 1;
+            this.bgAnimationTiemEvent.delay = 1000;
+        }
+
+        // this.resetAll();
     }
 
-    update() {}
+    resetAll() {
+        this.spinBtn.setTexture("start");
+        this.win = false;
+        this.throwSpeed = 1;
+        this.spinning = false;
+        this.bgAnimationTiemEvent.delay = 1000;
+    }
+
+    // scaleBackgroundToFit() {
+    //     const gameWidth = this.cameras.main.width;
+    //     const gameHeight = this.cameras.main.height;
+
+    //     // Calculate scale to cover the entire screen while maintaining aspect ratio
+    //     const scaleX = gameWidth / this.background.width;
+    //     const scaleY = gameHeight / this.background.height;
+    //     const scale = Math.max(scaleX, scaleY);
+
+    //     this.background.setScale(scale);
+
+    //     // Center the background
+    //     this.background.setPosition(gameWidth / 2, gameHeight / 2);
+    // }
+
+    update() {
+        this.checkResult();
+    }
 }
