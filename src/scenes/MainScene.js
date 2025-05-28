@@ -30,9 +30,9 @@ export class MainScene extends Scene {
         this.bgVideo = this.add
             .video(this.width / 2, this.height / 2, "bgVideo")
             .setScale(this.width / 1920)
-            .setDepth(2);
+            .setDepth(0);
 
-        this.bgVideo.setLoop(true);
+        // this.bgVideo.setLoop(true);
         this.bgVideo.play();
 
         this.add
@@ -389,7 +389,7 @@ export class MainScene extends Scene {
                                         coinsEmitter.destroy();
                                         this.shineBg.destroy();
 
-                                        this.bgVideo.setDepth(2);
+                                        this.bgVideo.setDepth(0);
                                         this.spinBtn.setDepth(3);
                                         this.playAnimation = true;
                                         this.playPaper = false;
@@ -479,7 +479,7 @@ export class MainScene extends Scene {
 
                                         this.bottomLogo.destroy();
 
-                                        this.bgVideo.setDepth(2);
+                                        this.bgVideo.setDepth(0);
                                         this.spinBtn.setDepth(3);
                                         this.playAnimation = true;
                                         this.playPaper = false;
