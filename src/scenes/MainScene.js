@@ -390,7 +390,7 @@ export class MainScene extends Scene {
                                         this.shineBg.destroy();
 
                                         this.bgVideo.setDepth(2);
-                                        this.spinBtn.setDepth(0);
+                                        this.spinBtn.setDepth(3);
                                         this.playAnimation = true;
                                         this.playPaper = false;
                                         this.bottomLogo.destroy();
@@ -480,7 +480,7 @@ export class MainScene extends Scene {
                                         this.bottomLogo.destroy();
 
                                         this.bgVideo.setDepth(2);
-                                        this.spinBtn.setDepth(0);
+                                        this.spinBtn.setDepth(3);
                                         this.playAnimation = true;
                                         this.playPaper = false;
                                         this.bgAnimationDepth = 5;
