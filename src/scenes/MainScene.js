@@ -27,13 +27,13 @@ export class MainScene extends Scene {
             .setDepth(1)
             .setDisplaySize(this.width, this.height);
 
-        this.bgVideo = this.add
-            .video(this.width / 2, this.height / 2, "bgVideo")
-            .setScale(this.width / 1920)
-            .setDepth(0);
+        // this.bgVideo = this.add
+        //     .video(this.width / 2, this.height / 2, "bgVideo")
+        //     .setScale(this.width / 1920)
+        //     .setDepth(0);
 
         // this.bgVideo.setLoop(true);
-        this.bgVideo.play();
+        // this.bgVideo.play();
 
         this.add
             .image(this.scale.width / 2, this.scale.height / 2, "wheel")
@@ -132,7 +132,7 @@ export class MainScene extends Scene {
             if (!this.spinning) {
                 this.spinBtn.setTexture("startPressed");
                 this.bottomLightBright.setVisible(true);
-                this.bgVideo.setDepth(0);
+                // this.bgVideo.setDepth(0);
                 this.spinBtn.setDepth(12);
                 this.playAnimation = true;
                 this.playPaper = true;
@@ -389,7 +389,7 @@ export class MainScene extends Scene {
                                         coinsEmitter.destroy();
                                         this.shineBg.destroy();
 
-                                        this.bgVideo.setDepth(0);
+                                        // this.bgVideo.setDepth(0);
                                         this.spinBtn.setDepth(3);
                                         this.playAnimation = true;
                                         this.playPaper = false;
@@ -479,7 +479,7 @@ export class MainScene extends Scene {
 
                                         this.bottomLogo.destroy();
 
-                                        this.bgVideo.setDepth(0);
+                                        // this.bgVideo.setDepth(0);
                                         this.spinBtn.setDepth(3);
                                         this.playAnimation = true;
                                         this.playPaper = false;
