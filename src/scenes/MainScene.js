@@ -124,7 +124,7 @@ export class MainScene extends Scene {
 
         this.spinBtn = this.add
             .image(this.scale.width * 0.14, this.scale.height * 0.83, "start")
-            .setDepth(0)
+            .setDepth(3)
             .setScale((1.1 * this.width) / 1920)
             .setInteractive();
 
