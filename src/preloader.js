@@ -20,9 +20,12 @@ export class Preloader extends Phaser.Scene {
         this.load.image("bottomLightDim", "bottomLightDim.png");
         this.load.image("bottomLightBright", "bottomLightBright.png");
         this.load.image("coins", "coins.png");
-        this.load.image("resultBg", "resultBg.png");
+        this.load.image("resultBg", "resultBg3.png");
         this.load.image("spinAgainBtn", "spinAgainBtn.png");
         this.load.image("shineBg", "shineBg.png");
+        this.load.image("bottomLogo", "bottomLogo.png");
+
+        this.load.video("bgVideo", "bgVideo.mp4", "loadeddata", true, true);
 
         this.load.audio("spinSound1", "spin.mp3");
         this.load.audio("spinSound2", "spin-sound.mp3");

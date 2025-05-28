@@ -17,3 +17,9 @@ body {
 canvas {
     margin: 0px;
 }
+
+@font-face {
+    font-family: "Glory ExtraBold";
+    src: url("assets/fonts/glory-extra-bold.ttf") format("ttf");
+    font-weight: 800;
+}

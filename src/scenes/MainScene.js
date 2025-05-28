@@ -27,6 +27,14 @@ export class MainScene extends Scene {
             .setDepth(1)
             .setDisplaySize(this.width, this.height);
 
+        this.bgVideo = this.add
+            .video(this.width / 2, this.height / 2, "bgVideo")
+            .setScale(this.width / 1920)
+            .setDepth(2);
+
+        this.bgVideo.setLoop(true);
+        this.bgVideo.play();
+
         this.add
             .image(this.scale.width / 2, this.scale.height / 2, "wheel")
             .setDepth(6)
@@ -87,41 +95,47 @@ export class MainScene extends Scene {
         //     .setDisplaySize(this.width, this.height)
         //     .setDepth(4);
         this.bgAnimationDepth = 5;
+        this.playAnimation = true;
+        this.playPaper = false;
         this.playBgAnimation();
-        const particle1 = this.add
-            .image(this.pointer.x, this.pointer.y, "paperThrown")
-            .setScale(0.6)
-            .setAlpha(0.7)
-            .setDepth(5)
-            .setAngle(Math.random() * 360);
-        const particle2 = this.add
-            .image(this.pointer.x, this.pointer.y, "leftChips")
-            .setScale(0.8)
-            .setAlpha(0.7)
-            .setDepth(5)
-            .setAngle(Math.random() * 360);
-        this.tweens.add({
-            targets: [particle1, particle2],
-            scale: 3,
-            alpha: 1,
-            duration: 4500,
-            ease: "Linear",
-            onComplete: () => {
-                particle1.destroy();
-                particle2.destroy();
-            },
-        });
+        // const particle1 = this.add
+        //     .image(this.pointer.x, this.pointer.y, "paperThrown")
+        //     .setScale(0.6)
+        //     .setAlpha(0.7)
+        //     .setDepth(5)
+        //     .setAngle(Math.random() * 360);
+        // const particle2 = this.add
+        //     .image(this.pointer.x, this.pointer.y, "leftChips")
+        //     .setScale(0.8)
+        //     .setAlpha(0.7)
+        //     .setDepth(5)
+        //     .setAngle(Math.random() * 360);
+        // this.tweens.add({
+        //     targets: [particle1, particle2],
+        //     scale: 3,
+        //     alpha: 1,
+        //     duration: 4500,
+        //     ease: "Linear",
+        //     onComplete: () => {
+        //         particle1.destroy();
+        //         particle2.destroy();
+        //     },
+        // });
 
         this.spinBtn = this.add
-            .image(this.scale.width * 0.15, this.scale.height * 0.8, "start")
-            .setDepth(12)
-            .setScale((0.8 * this.width) / 1920)
+            .image(this.scale.width * 0.14, this.scale.height * 0.83, "start")
+            .setDepth(0)
+            .setScale((1.1 * this.width) / 1920)
             .setInteractive();
 
         this.spinBtn.on("pointerdown", () => {
             if (!this.spinning) {
                 this.spinBtn.setTexture("startPressed");
                 this.bottomLightBright.setVisible(true);
+                this.bgVideo.setDepth(0);
+                this.spinBtn.setDepth(12);
+                this.playAnimation = true;
+                this.playPaper = true;
                 this.spinPointer();
             }
         });
@@ -137,46 +151,58 @@ export class MainScene extends Scene {
             delay: 1000, // every 1 second
             loop: true,
             callback: () => {
-                this.circleLight.setAngle((this.circleLight.angle += 5));
-                if (this.bottomLightOn) {
-                    const particle1 = this.add
-                        .image(this.pointer.x, this.pointer.y, "paperThrown")
-                        .setScale(0.2)
-                        .setAlpha(0.7)
-                        .setDepth(this.bgAnimationDepth)
-                        .setAngle(Math.random() * 360);
-                    const particle2 = this.add
-                        .image(this.pointer.x, this.pointer.y, "leftChips")
-                        .setScale(0.2)
-                        .setAlpha(0.7)
-                        .setDepth(this.bgAnimationDepth)
-                        .setAngle(Math.random() * 360);
-                    this.tweens.add({
-                        targets: [particle1, particle2],
-                        scale: 3,
-                        alpha: 1,
-                        duration: 8000 / this.throwSpeed,
-                        ease: "Linear",
-                        onComplete: () => {
-                            particle1.destroy();
-                            particle2.destroy();
-                        },
-                    });
-                    this.bottomLightOn = false;
-                    this.bottomLightDim.setVisible(true);
-                    this.iconBright.setVisible(true);
-                    this.front.setAlpha(1.2);
-                } else {
-                    this.bottomLightOn = true;
-                    this.bottomLightDim.setVisible(false);
-                    this.iconBright.setVisible(false);
-                    this.front.setAlpha(0.9);
-                    if (this.iconBrightFlipped) {
-                        this.iconBrightFlipped = false;
-                        this.iconBright.flipX = false;
+                if (this.playAnimation) {
+                    this.circleLight.setAngle((this.circleLight.angle += 5));
+                    if (this.bottomLightOn) {
+                        if (this.playPaper) {
+                            const particle1 = this.add
+                                .image(
+                                    this.pointer.x,
+                                    this.pointer.y,
+                                    "paperThrown"
+                                )
+                                .setScale(0.2)
+                                .setAlpha(0.7)
+                                .setDepth(this.bgAnimationDepth)
+                                .setAngle(Math.random() * 360);
+                            const particle2 = this.add
+                                .image(
+                                    this.pointer.x,
+                                    this.pointer.y,
+                                    "leftChips"
+                                )
+                                .setScale(0.2)
+                                .setAlpha(0.7)
+                                .setDepth(this.bgAnimationDepth)
+                                .setAngle(Math.random() * 360);
+                            this.tweens.add({
+                                targets: [particle1, particle2],
+                                scale: 3,
+                                alpha: 1,
+                                duration: 8000 / this.throwSpeed,
+                                ease: "Linear",
+                                onComplete: () => {
+                                    particle1.destroy();
+                                    particle2.destroy();
+                                },
+                            });
+                        }
+                        this.bottomLightOn = false;
+                        this.bottomLightDim.setVisible(true);
+                        this.iconBright.setVisible(true);
+                        this.front.setAlpha(1.2);
                     } else {
-                        this.iconBrightFlipped = true;
-                        this.iconBright.flipX = true;
+                        this.bottomLightOn = true;
+                        this.bottomLightDim.setVisible(false);
+                        this.iconBright.setVisible(false);
+                        this.front.setAlpha(0.9);
+                        if (this.iconBrightFlipped) {
+                            this.iconBrightFlipped = false;
+                            this.iconBright.flipX = false;
+                        } else {
+                            this.iconBrightFlipped = true;
+                            this.iconBright.flipX = true;
+                        }
                     }
                 }
             },
@@ -189,14 +215,14 @@ export class MainScene extends Scene {
 
         this.tween = this.tweens.add({
             targets: [this.pointer, this.circleLight],
-            angle: Math.floor(360 * (Math.random() * 2 + 6)),
+            angle: Math.floor(360 * (Math.random() * 2 + 10)),
             duration: 15000,
             ease: "Cubic.easeOut",
             callbackScope: this,
             onComplete: function (tween) {
-                setTimeout(() => {
-                    this.showResult();
-                }, 1000);
+                this.cameras.main.fadeOut(1000);
+                this.cameras.main.fadeIn(500);
+                this.showResult();
             },
         });
     }
@@ -205,7 +231,7 @@ export class MainScene extends Scene {
         this.result = "";
         let previousSpinSoundSerial = this.spinSoundSerial;
         if (angle > 13 && angle <= 44) {
-            this.result = "FREE FLIPFLOPS";
+            this.result = "FREE\nFLIPFLOPS";
             this.spinSoundSerial = 1;
             this.win = true;
         } else if (angle > 44 && angle <= 69) {
@@ -237,7 +263,7 @@ export class MainScene extends Scene {
             this.spinSoundSerial = 8;
             this.win = true;
         } else if (angle > -109 && angle <= -74) {
-            this.result = "NEXT TIME, MATE!";
+            this.result = "NEXT TIME,\nMATE!";
             this.spinSoundSerial = 9;
             this.win = false;
         } else if (angle > -74 && angle <= -46) {
@@ -258,17 +284,25 @@ export class MainScene extends Scene {
         }
     }
     showResult() {
-        this.shineBg = this.add
+        this.bottomLogo = this.add
             .image(
                 this.scale.width * 0.505,
                 this.scale.height * 0.492,
-                "shineBg"
+                "bottomLogo"
             )
+            .setOrigin(0.5, 0.5)
+            .setAlpha(1.5)
+            .setDisplaySize(this.width, this.height)
+            .setDepth(18);
+        this.shineBg = this.add
+            .image(this.scale.width * 0.5, this.scale.height * 0.492, "shineBg")
             .setOrigin(0.5, 0.5)
             .setDisplaySize(this.width, this.height)
             .setDepth(14);
         if (this.win) {
-            this.bgAnimationDepth = 14;
+            setTimeout(() => {
+                this.bgAnimationDepth = 14;
+            }, 1000);
             this.winSound.play();
             let blurRect = this.add
                 .rectangle(
@@ -277,28 +311,28 @@ export class MainScene extends Scene {
                     this.width,
                     this.height,
                     0x000000,
-                    0.6
+                    0.8
                 )
                 .setDepth(13);
             let resultBg = this.add
                 .image(
                     this.scale.width * 0.5,
-                    this.scale.height * 0.47,
+                    this.scale.height * 0.5,
                     "resultBg"
                 )
                 .setDepth(15)
                 .setOrigin(0.5, 0.5)
-                .setDisplaySize(this.width * 0.8, this.height * 0.8);
+                .setDisplaySize(this.width, this.height);
 
             let resultText = this.add
                 .text(
                     this.width * 0.5,
-                    this.height * 0.42,
+                    this.height * 0.44,
                     "YOU WIN\n" + this.result,
                     {
-                        fontSize: "40px",
-                        color: "#54ff41de",
-                        fontFamily: "Arial",
+                        fontSize: "50px",
+                        color: "#fff",
+                        fontFamily: "Glory ExtraBold",
                         fontStyle: "bold",
                         align: "center",
                         lineSpacing: 20,
@@ -355,6 +389,12 @@ export class MainScene extends Scene {
                                         coinsEmitter.destroy();
                                         this.shineBg.destroy();
 
+                                        this.bgVideo.setDepth(2);
+                                        this.spinBtn.setDepth(0);
+                                        this.playAnimation = true;
+                                        this.playPaper = false;
+                                        this.bottomLogo.destroy();
+
                                         this.bgAnimationDepth = 5;
                                         setTimeout(() => {
                                             this.cameras.main.fadeIn(500);
@@ -380,7 +420,7 @@ export class MainScene extends Scene {
                     this.width,
                     this.height,
                     0x000000,
-                    0.6
+                    0.8
                 )
                 .setDepth(13);
             let resultBg = this.add
@@ -391,13 +431,13 @@ export class MainScene extends Scene {
                 )
                 .setDepth(15)
                 .setOrigin(0.5, 0.5)
-                .setDisplaySize(this.width * 0.8, this.height * 0.8);
+                .setDisplaySize(this.width, this.height);
 
             let resultText = this.add
-                .text(this.width * 0.5, this.height * 0.46, this.result, {
-                    fontSize: "40px",
-                    color: "#330000",
-                    fontFamily: "Arial",
+                .text(this.width * 0.5, this.height * 0.44, this.result, {
+                    fontSize: "50px",
+                    color: "#fff",
+                    fontFamily: "Glory ExtraBold",
                     fontStyle: "bold",
                     align: "center",
                     lineSpacing: 20,
@@ -436,6 +476,15 @@ export class MainScene extends Scene {
                                         resultText.destroy();
                                         spinAgainBtn.destroy();
                                         this.shineBg.destroy();
+
+                                        this.bottomLogo.destroy();
+
+                                        this.bgVideo.setDepth(2);
+                                        this.spinBtn.setDepth(0);
+                                        this.playAnimation = true;
+                                        this.playPaper = false;
+                                        this.bgAnimationDepth = 5;
+
                                         setTimeout(() => {
                                             this.cameras.main.fadeIn(500);
                                             this.resetAll();
