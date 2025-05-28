@@ -77,7 +77,16 @@ export class MainScene extends Scene {
             .setOrigin(0.5, 0.5)
             .setDisplaySize(this.width, this.height)
             .setDepth(11);
-
+        // this.shineBg = this.add
+        //     .image(
+        //         this.scale.width * 0.505,
+        //         this.scale.height * 0.492,
+        //         "shineBg"
+        //     )
+        //     .setOrigin(0.5, 0.5)
+        //     .setDisplaySize(this.width, this.height)
+        //     .setDepth(4);
+        this.bgAnimationDepth = 5;
         this.playBgAnimation();
         const particle1 = this.add
             .image(this.pointer.x, this.pointer.y, "paperThrown")
@@ -134,13 +143,13 @@ export class MainScene extends Scene {
                         .image(this.pointer.x, this.pointer.y, "paperThrown")
                         .setScale(0.2)
                         .setAlpha(0.7)
-                        .setDepth(5)
+                        .setDepth(this.bgAnimationDepth)
                         .setAngle(Math.random() * 360);
                     const particle2 = this.add
                         .image(this.pointer.x, this.pointer.y, "leftChips")
                         .setScale(0.2)
                         .setAlpha(0.7)
-                        .setDepth(5)
+                        .setDepth(this.bgAnimationDepth)
                         .setAngle(Math.random() * 360);
                     this.tweens.add({
                         targets: [particle1, particle2],
@@ -249,7 +258,17 @@ export class MainScene extends Scene {
         }
     }
     showResult() {
+        this.shineBg = this.add
+            .image(
+                this.scale.width * 0.505,
+                this.scale.height * 0.492,
+                "shineBg"
+            )
+            .setOrigin(0.5, 0.5)
+            .setDisplaySize(this.width, this.height)
+            .setDepth(14);
         if (this.win) {
+            this.bgAnimationDepth = 14;
             this.winSound.play();
             let blurRect = this.add
                 .rectangle(
@@ -258,7 +277,7 @@ export class MainScene extends Scene {
                     this.width,
                     this.height,
                     0x000000,
-                    0.3
+                    0.6
                 )
                 .setDepth(13);
             let resultBg = this.add
@@ -286,6 +305,7 @@ export class MainScene extends Scene {
                     }
                 )
                 .setOrigin(0.5)
+                .setScale((1.2 * this.width) / 1920)
                 .setDepth(16);
 
             let coinsEmitter = this.add
@@ -295,7 +315,7 @@ export class MainScene extends Scene {
                     speed: 300,
                     lifespan: 3000,
                     gravityY: 300,
-                    scale: 0.3,
+                    scale: (0.3 * this.width) / 1920,
                     alpha: 0.8,
                 })
                 .setDepth(14);
@@ -311,7 +331,7 @@ export class MainScene extends Scene {
                 )
                 .setDepth(15)
                 .setOrigin(0.5, 0.5)
-                .setScale(0.6)
+                .setScale((0.6 * this.width) / 1920)
                 .setInteractive({ useHandCursor: true })
                 .on("pointerdown", () => {
                     this.tweens.add({
@@ -333,6 +353,9 @@ export class MainScene extends Scene {
                                         resultText.destroy();
                                         spinAgainBtn.destroy();
                                         coinsEmitter.destroy();
+                                        this.shineBg.destroy();
+
+                                        this.bgAnimationDepth = 5;
                                         setTimeout(() => {
                                             this.cameras.main.fadeIn(500);
                                             this.resetAll();
@@ -357,7 +380,7 @@ export class MainScene extends Scene {
                     this.width,
                     this.height,
                     0x000000,
-                    0.3
+                    0.6
                 )
                 .setDepth(13);
             let resultBg = this.add
@@ -371,7 +394,7 @@ export class MainScene extends Scene {
                 .setDisplaySize(this.width * 0.8, this.height * 0.8);
 
             let resultText = this.add
-                .text(this.width * 0.5, this.height * 0.47, this.result, {
+                .text(this.width * 0.5, this.height * 0.46, this.result, {
                     fontSize: "40px",
                     color: "#330000",
                     fontFamily: "Arial",
@@ -380,7 +403,8 @@ export class MainScene extends Scene {
                     lineSpacing: 20,
                 })
                 .setOrigin(0.5)
-                .setDepth(16);
+                .setDepth(16)
+                .setScale((1.2 * this.width) / 1920);
 
             let spinAgainBtn = this.add
                 .image(
@@ -390,7 +414,7 @@ export class MainScene extends Scene {
                 )
                 .setDepth(15)
                 .setOrigin(0.5, 0.5)
-                .setScale(0.6)
+                .setScale((0.6 * this.width) / 1920)
                 .setInteractive({ useHandCursor: true })
                 .on("pointerdown", () => {
                     this.tweens.add({
@@ -411,6 +435,7 @@ export class MainScene extends Scene {
                                         resultBg.destroy();
                                         resultText.destroy();
                                         spinAgainBtn.destroy();
+                                        this.shineBg.destroy();
                                         setTimeout(() => {
                                             this.cameras.main.fadeIn(500);
                                             this.resetAll();
